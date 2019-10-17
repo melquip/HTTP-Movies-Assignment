@@ -35,7 +35,7 @@ const App = (props) => {
 		axios
 			.delete(`http://localhost:5000/api/movies/${id}`)
 			.then(res => {
-				setMovies(movies.filter(movie => movie.id ))
+				setMovies(movies.filter(movie => movie.id !== id))
 			})
 			.catch(err => console.log(err.response));
 	}
@@ -59,7 +59,6 @@ const App = (props) => {
 				.put(`http://localhost:5000/api/movies/${moviesForm.id}`, { ...moviesForm, stars })
 				.then(res => {
 					setMoviesForm(moviesFormInitialState);
-					console.log(res);
 					props.history.push('/');
 				})
 				.catch(err => console.log(err.response));
@@ -74,8 +73,9 @@ const App = (props) => {
 			axios
 				.post(`http://localhost:5000/api/movies`, newMovie)
 				.then(res => {
+					debugger;
 					setMoviesForm(moviesFormInitialState);
-					setMovies(movies.concat(res.data))
+					setMovies(res.data)
 					props.history.push('/');
 				})
 				.catch(err => console.log(err.response));
@@ -106,6 +106,15 @@ const App = (props) => {
 					moviesForm={moviesForm}
 					setMovies={setMovies}
 					setMoviesForm={setMoviesForm}
+					onMovieFormChange={onMovieFormChange}
+					onSubmitMovie={onSubmitMovie}
+				/>}
+			/>
+			<Route
+				path="/add-movie"
+				render={props => <MovieForm
+					{...props}
+					moviesForm={moviesForm}
 					onMovieFormChange={onMovieFormChange}
 					onSubmitMovie={onSubmitMovie}
 				/>}
