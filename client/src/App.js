@@ -11,7 +11,7 @@ const moviesFormInitialState = {
 	title: "",
 	director: "",
 	metascore: "",
-	stars: []
+	stars: ""
 };
 
 const App = (props) => {
@@ -35,7 +35,7 @@ const App = (props) => {
 		axios
 			.delete(`http://localhost:5000/api/movies/${id}`)
 			.then(res => {
-				console.log(res);
+				setMovies(movies.filter(movie => movie.id ))
 			})
 			.catch(err => console.log(err.response));
 	}
@@ -53,8 +53,10 @@ const App = (props) => {
 		e.preventDefault();
 		console.log("SUBMITIN", moviesForm)
 		if (moviesForm.id !== null) {
+			let stars = Array.isArray(moviesForm.stars) ? [ ...moviesForm.stars ] : [ ...moviesForm.stars.split(',') ];
+			debugger;
 			axios
-				.put(`http://localhost:5000/api/movies/${moviesForm.id}`, moviesForm)
+				.put(`http://localhost:5000/api/movies/${moviesForm.id}`, { ...moviesForm, stars })
 				.then(res => {
 					setMoviesForm(moviesFormInitialState);
 					console.log(res);
@@ -63,6 +65,21 @@ const App = (props) => {
 				.catch(err => console.log(err.response));
 		} else {
 			// stretch
+			const newMovie = {
+				title: moviesForm.title,
+				director: moviesForm.director,
+				metascore: moviesForm.metascore,
+				stars: [ ...moviesForm.stars.split(',') ]
+			}
+			axios
+				.post(`http://localhost:5000/api/movies`, newMovie)
+				.then(res => {
+					setMoviesForm(moviesFormInitialState);
+					setMovies(movies.concat(res.data))
+					props.history.push('/');
+				})
+				.catch(err => console.log(err.response));
+			props.history.push('/');
 		}
 	}
 

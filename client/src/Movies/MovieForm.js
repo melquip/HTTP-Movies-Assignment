@@ -7,15 +7,16 @@ const MovieForm = ({ match, movies, setMovies, moviesForm, setMoviesForm, onMovi
 			.get("http://localhost:5000/api/movies")
 			.then(res => {
 				setMovies(res.data);
-				setMoviesForm(res.data.find(mov => mov.id === Number(match.params.id)));
+				let movie = res.data.find(mov => mov.id === Number(match.params.id));
+				movie.stars = movie.stars.join(',');
+				setMoviesForm(movie);
 			})
 			.catch(err => console.log(err.response));
 	};
-	if (movies < 1 && match.params.id) {
+	if (movies < 1 && match.params.id !== 'add') {
 		fetchMovies();
 		return 'Loading...';
 	}
-	const { title, director, metascore, stars } = moviesForm;
 	return (
 		<form className="movie-form" onSubmit={onSubmitMovie}>
 			<label htmlFor="title">Title</label>
@@ -23,7 +24,7 @@ const MovieForm = ({ match, movies, setMovies, moviesForm, setMoviesForm, onMovi
 				id="title"
 				name="title"
 				type="text"
-				value={title}
+				value={moviesForm.title}
 				onChange={onMovieFormChange}
 			/>
 			<label htmlFor="director">Director</label>
@@ -31,7 +32,7 @@ const MovieForm = ({ match, movies, setMovies, moviesForm, setMoviesForm, onMovi
 				id="director"
 				name="director"
 				type="text"
-				value={director}
+				value={moviesForm.director}
 				onChange={onMovieFormChange}
 			/>
 			<label htmlFor="metascore">Metascore</label>
@@ -39,7 +40,7 @@ const MovieForm = ({ match, movies, setMovies, moviesForm, setMoviesForm, onMovi
 				id="metascore"
 				name="metascore"
 				type="number"
-				value={metascore}
+				value={moviesForm.metascore}
 				onChange={onMovieFormChange}
 			/>
 			<label htmlFor="stars">Stars</label>
@@ -47,7 +48,7 @@ const MovieForm = ({ match, movies, setMovies, moviesForm, setMoviesForm, onMovi
 				id="stars"
 				name="stars"
 				type="text"
-				value={stars}
+				value={moviesForm.stars}
 				onChange={onMovieFormChange}
 			/>
 			<button type="submit">Submit</button>
